@@ -15,11 +15,11 @@ if ((Get-ADUser -Identity $SamAccountName).Enabled -eq $True) {
    exit
 }
 
-if ($OfficeLocation -eq "COL") {
-   $UsersOU = "OU=Users,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global"
+if ($OfficeLocation -eq "gp1") {
+   $UsersOU = "OU=Users,OU=gp1,OU=CP,OU=_Divisions,DC=domain,DC=global"
 }
 elseif ($OfficeLocation -eq "BOU") {
-   $UsersOU = "OU=Users,OU=BOU,OU=CP,OU=_Divisions,DC=icig,DC=global"
+   $UsersOU = "OU=Users,OU=gp2,OU=CP,OU=_Divisions,DC=domain,DC=global"
 }
 else {
    Write-Host "User not found or invalid office location. Please run ./add_office_location.ps1 with admin privileges to set the office locations of the users."
