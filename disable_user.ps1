@@ -14,13 +14,13 @@ if ((Get-ADUser -Identity $SamAccountName).Enabled -eq $False) {
    exit
 }
 
-if ($OU -eq "COL") {
+if ($OU -eq "gp1") {
    $DisabledUsersOU = "OU=Disabled Users,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global"
-   $OfficeLocation = "COL"
+   $OfficeLocation = "gp1"
 }
-elseif ($OU -eq "BOU") {
+elseif ($OU -eq "gp2") {
    $DisabledUsersOU = "OU=Disabled Users,OU=BOU,OU=CP,OU=_Divisions,DC=icig,DC=global"
-   $OfficeLocation = "BOU"
+   $OfficeLocation = "gp2"
 }
 else {
    Write-Host "User not found"
