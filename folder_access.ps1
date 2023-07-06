@@ -1,4 +1,4 @@
-# Accepts two arguments: A username and a path to a folder
+# Accepts three arguments: A username and a path to a folder and permission level
 param (
     [Parameter(Mandatory = $true)]
     [string]$Username,
@@ -6,136 +6,116 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$path,
 
-    [Parameter(Mandatory = $false)]
-    [string]$read
+    [Parameter(Mandatory = $true)]
+    [string]$rwm
 )
+Import-Module ActiveDirectory
+
+if (!$rwm.Contains("r") -and !$rwm.Contains("w") -and !$rwm.Contains("m")) {
+    Write-Host "Your permissions (rwm) argument needs to contain an r, a w, or an m"
+    exit
+}
+
+if ($Username.Length -eq 0 -or $path.Length -eq 0 -or $rwm.Length -eq 0) {
+    Write-Host "No program arguments can be null, please ensure you entered all values in correctly"
+    exit
+}
+
+if (!($null -ne ([ADSISearcher] "(SamAccountName=$Username)").FindOne())) {
+    Write-Host "Could not find user: $($Username)"
+    exit
+}
 
 # Give the full path if the user sends a drive name
-$path = $path.Replace("\\", "\")
+
 if ($path.Contains(":")) {
+    $path = $path.Replace("\\", "\")
     $sub = $path.Substring(0, 1)
     $rest = $path.Substring(2)
     switch ($sub) {
-        "J" { $path = "\\uscosf5101.icig.global\GroupShares\Departments" + $rest }
-        "K" { $path = "\\uscosf5101.icig.global\GroupShares\Shared" + $rest }
-        "L" { $path = "\\uscosf5101.icig.global\GroupShares\SFA" + $rest }
-        "V" { $path = "\\cp4boufs102.icig.global\f\departments" + $rest }
-        "W" { $path = "\\cp4boufs101.icig.global\f\Projects" + $rest }
-        "X" { $path = "\\cp4boufs101.icig.global\f\Projects\Vault" + $rest }
+        "J" { $path = "\\" + $rest }
+        "K" { $path = "\\" + $rest }
+        "L" { $path = "\\" + $rest }
+        "V" { $path = "\\" + $rest }
+        "W" { $path = "\\" + $rest }
+        "X" { $path = "\\" + $rest }
         Default { Write-Host "You do not need an access request for your U or C drives. If you think this is an error, please ensure that your path name is correct" }
     }
 }
-Import-Module ActiveDirectory
-# Check to see if user has a non-empty job
-$filter_user = Get-ADUser -Filter "SamAccountName -eq '$Username'"
-$ggg = Get-ADUser -Identity $filter_user -Properties Description | Select-Object -ExpandProperty Description
-if ($null -eq $ggg) {
-    Write-Host "Specified user has no job listed in the description section in the Active Directory Suite, please add a job and restart this program"
-    exit
-}
-else {
-    $Job = $ggg
-}
 
 $FolderPath = $path
-$GroupPrefix = "ICIG\"
+$GroupPrefix = ""
 
 # Check to see what groups have access to the folder
 try {
-    $Acl = Get-Acl -Path $FolderPath
+    # This command gets the windows security groups and the AD groups attached to a folder based on the path the user provided
+    $Acl = Get-Acl -Path $FolderPath -ErrorAction Stop
 }
 catch {
-    Write-Host "Could not find path to folder: $($element): $_"
+    Write-Host "$_. Attempting to connect the drive manually"
+    try {
+        New-PSDrive -Name "G" -PSProvider "FileSystem" -Root "$FolderPath"
+        $Acl = Get-Acl -Path $FolderPath -ErrorAction Stop
+    }
+    catch {
+        Write-Host "Could not connect to drive, if you think this is an error, please send a detailed message to IT explaining what you're trying to gain access to."
+        exit
+    }
 }
-$Groups = $Acl.Access |
-Where-Object { $_.IdentityReference.Value -like "${GroupPrefix}*" } |
-Select-Object -ExpandProperty IdentityReference
 
+# Remove all groups that don't start with "prefix"
+$Groups = $Acl.Access | Where-Object { $_.IdentityReference.Value -like "${GroupPrefix}*" } | Select-Object -ExpandProperty IdentityReference
+
+# Remove all duplicate elements in the groups and put it in $ret
 [String[]]$ret = @()
 foreach ($element in $Groups) {
     if (-not($ret -contains $element)) {
         $ret += Write-Output $element
     }
 }
-$ret = $ret | Where-Object { $_ -ne "ICIG\Domain Users" }
-$ret = $ret | Where-Object { $_.Substring(0, 13) -ne "ICIG\DriveMap" }
-if ("" -ne $read) {
-    $ret = $ret | Where-Object { $_.Substring($_.Length - 2) -ne "-M" }
+
+$fuck_it_we_ball = $false
+$savestate = $ret | Where-Object { $_ -match "[-](M|R|W)$" }
+if ($savestate.Count -lt 1) {
+    [String[]]$big_array = ""
+    $ret = $ret | Where-Object { $big_array -contains $_ }
+    $fuck_it_we_ball = $true
 }
-$ret
-exit
-# Make a k/v pair to store the group as the k and the jobs that are part of that group as the v
-$permission_job = @{}
-foreach ($element in $ret) {
-    try {
-        $members = Get-ADGroupMember -Identity $element.Substring(5) -ErrorAction Stop
-        $descriptionHash = @{}
-        foreach ($member in $members) {
-            if ($member.objectClass -eq "user") {
-                try {
-                    $user = Get-ADUser -Identity $member -Properties Description -ErrorAction Stop
-                    $description = $user.Description
-                    if ($null -ne $description -and !$descriptionHash.ContainsKey($description)) {
-                        $descriptionHash[$description] = $true
-                    }
-                }
-                catch {
-                    Write-Host "Failed to retrieve user information for member $($member.Name): $_"
-                }
-            }
-        }
-  
-        if ($descriptionHash.Count -gt 0) {
-            $descriptions = $descriptionHash.Keys
-            $permission_job[$element] = $descriptions
-        }
-        else {
-            Write-Host "No descriptions found for the group $($element)."
-        }
+else {
+    $ret = $ret | Where-Object { $_ -match "[-](M|R|W)$" }
+}
+$endret = $ret
+
+
+if (!$fuck_it_we_ball) {
+    # Remove the unspecified permissions
+    if ($rwm.Contains("m")) {
+        $ret = $ret | Where-Object { !($_.EndsWith("-W")) }
+        $ret = $ret | Where-Object { !($_.EndsWith("-R")) }
     }
-    catch {
-        Write-Host "Failed to retrieve security group $($element): $_"
+    elseif ($rwm.Contains("w")) {
+        Write-Host "There was no write access found in association with the folder $path. Did you mean to request modify access?"
+        $ret = $ret | Where-Object { !($_.EndsWith("-R")) }
+    }
+    elseif ($rwm.Contains("r")) {
+        $ret = $ret | Where-Object { ($_.EndsWith("-R")) }
     }
 }
 
 $added = @()
-$numsearched = 0
-[String[]] $strs = $permission_job.Keys
+$already = @()
 
 # For every group that contains the job of the user, add the user to that group
-for ($i = 0; $i -lt $permission_job.Count; $i++) {
+foreach ($element in $ret) {
     try {
-        $group = Get-ADGroup ($strs[$i].Substring(5))
-        if ($permission_job[$strs[$i]] -contains $Job) {
-            if ($null -eq $group) {
-                Write-Host "Security group does not exist in the specified folder."
-                exit
-            }
-            $ous = "OU=Users,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global", "OU=Users,OU=BOU,OU=CP,OU=_Divisions,DC=icig,DC=global"
-            $users = $ous | ForEach-Object { Get-ADUser -SearchBase $_ -Filter * -Properties samAccountName | Select-Object -expand samAccountName }
-            foreach ($usert in $users) {
-                if ($usert -eq $Username) {
-                    $user = $usert
-                }
-            }
-  
-            if ($null -eq $user) {
-                Write-Error "User with logon name '$Username' does not exist."
-                exit
-            }
-  
-            $tmp = Get-ADUser -Filter "SamAccountName -eq '$user'"
-            $GroupDN = (Get-ADGroup ($strs[$i].Substring(5))).DistinguishedName
-            $UserDN = (Get-ADUser $Username).DistinguishedName
-            if (Get-ADUser -Filter "memberOf -RecursiveMatch '$GroupDN'" -SearchBase $UserDN) {
-                Write-Host "Member already exists in '$strs[$i]'."
-                $numsearched += 1
-            }
-            else {
-                Add-ADGroupMember -Identity ($strs[$i].Substring(5)) -Members $tmp
-                $added += ($strs[$i].Substring(5))
-                $numsearched += 1
-            }
+        $group = Get-ADGroup ($element.Substring(5))
+        $error.Clear()
+        & ".\user_to_group.ps1" $Username $group
+        if ($error.Count -eq 0) {
+            $added += ($element.Substring(5))
+        }
+        else {
+            $already += ($element.Substring(5))
         }
     }
     catch {
@@ -145,11 +125,17 @@ for ($i = 0; $i -lt $permission_job.Count; $i++) {
 }
 
 # Print out information about where the user was / was not added to
-if ($added.Count -ne 0) {
-    Write-Host "Added the user '$Username' to --> "
-    $added
+if ($added.Count -ne 0 -or $already.Count -ne 0) {
+    if ($added.Count -ne 0) {
+        Write-Host "Added the user '$Username' to --> "
+        $added
+    }
+    if ($already.Count -ne 0) {
+        Write-Host "User '$Username' was already found in --> "
+        $already
+    }
 }
 else {
-    Write-Host "There were no known groups associated with the job specified ('$Job'). If this is the first instance of a user with this job being added to the group, add the user manually"
-    Read-Host "Press enter to exit."
+    Write-Host "There were no known groups we could add the user to with the specified permissions -" $rwm "- The groups found are listed below"
+    $endret
 }
