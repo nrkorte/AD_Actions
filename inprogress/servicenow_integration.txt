@@ -1,0 +1,98 @@
+Automate ServiceNow Integration Tasks from PowerShell: https://www.cdata.com/kb/tech/servicenow-ado-powershell.rst
+COMMAND LINE EXECUTION WITH SERVICENOW MID SERVERS: https://john-james-andersen.com/blog/service-now/command-line-execution-with-servicenow-mid-servers.html
+Now Platform capabilities: https://docs.servicenow.com/bundle/tokyo-servicenow-platform/page/administer/general/reference/r_ServiceNowPlatform.html
+Execute PowerShell Scripts in Service Now: https://www.youtube.com/watch?v=is8vSW4aFQk
+Integration hub Series: PowerShell Action Creation and Usage: https://www.servicenow.com/community/now-platform-blog/integration-hub-series-powershell-action-creation-and-usage/ba-p/2332947
+
+Here is how to be able to run these scripts from ServiceNow after the switch over from FreshService:
+
+
+https://www.servicenow.com/community/itom-forum/powershell-utility-v2-execute-powershell-scripts-directly-from/m-p/978032
+Method 1: MID server (Management, Instrumentation, and Discovery)
+You must have a MID Server installed on a Microsoft Windows machine with PowerShell v. 2.0 setup. Also, if you have Enhanced Windows Security enabled, you must unblock the Powershell modules in the MID Server. See this link: Unblocking the MID Server Powershell Modules
+
+You must also set "Powershell" as a capability on the MID Server.
+
+For remote powershell execution (executing powershell scripts on a Windows computer that is NOT the one hosting the MID Server) you will need to have the Runbook Automation product from ServiceNow and set up the credentials for the remote device.
+
+ PowerShellProbe( midserver, psServer ,midScriptfileSysId)
+The Class Constructor
+
+midserver (optional) — The name of the MID Server that will process the command
+psServer (optional) — The IP Address of the computer that the Powershell Script will execute against. The localhost ip address (127.0.0.1) indicates that the Powershell script will run on the same machine as the MID Server. If you have Runbook Automation enabled on your instance, you can execute the powershell script on a remote computer. The remote computer must be a Windows devices in the domain that trusts the Windows box hosting the MID Server. Runbook Automation allows you to store Windows Credentials that can be used to authenticate against the remote machine to execute the desired script.
+midScriptfileSysId (optional) — The sys_id of the script file from the table ecc_agent_script_file   that should be executed. If you don't specify this variable you need to provide a Powershell script with the function "setScript(script)".
+setPSServer( psServer )
+Sets the PowerShell device IP Address. This is typically used if you did not specify the address in the constructor when you instantiated the class.
+
+psServer — The IP Address to the windows device that will execute the Powershell Script
+setMidServer( midserver )
+Sets the name of the MID Server that will process the Powershell Request. This method is typically used if you do not specify the MID Server in the constructor when you instantiated the class.
+
+midserver — Name of the MID Server (eg. WinMid1)
+setMidScript( midServer )
+Sets the sys_id of the MID Script File that should be executed. This method is typically used if you do not specify the MID Script File in the constructor when you instantiated the class.
+
+midScript — Sys_id of the MID Script File from the table ecc_agent_script_file
+setScript( script )
+Stores the PowerShell script that will be executed remotel. OR if a script file is specified it stores the additional parameters in a JSON format, similar to the "Run Powershell" activity on a workflow.
+
+script — The script or json-parameters string
+setMaxWait( seconds )
+Set the maximum number of seconds that you will wait for a response from the MID Server on this request before you move on. If you don't call this method, the default max wait time is 60 seconds.
+
+seconds — Maximum number of seconds to wait for a response from the MID Server on this request (if you choose to wait at all).
+execute( waitForResponse )
+Sends the request to the ECC Queue for processing. If you choose to wait for the reponse, the method will return an object that contains an "output" variable and and "error" variable. The output variable will contain the text from the Stdout buffer. The error variable will contain the text from the StdErr buffer.
+
+waitForResponse (boolean) — Optional. The value of true will hold the script until the MID Server has responded, or until the maxWait period has expired.
+
+
+EXAMPLE:
+    var pb = new PowershellProbe("EC2WINMID1", "127.0.0.1",""); //midScript is an empty string
+    var script = "$myVarName = 'John Andersen'\n" + "Write-Host $myVarName\n";
+    pb.setScript(script);
+    var response = pb.execute(true);
+    gs.log("OUTPUT: " + response.output);
+    gs.log("ERROR: " + response.error);
+
+And if you want to use a Script File from the "ecc_agent_script_file" table:
+
+    var pb = new PowershellProbe("EC2WINMID1", "127.0.0.1","964e71ca6f620a00c1587afede3ee422"); //PowershellUtility-DemoScript.ps1
+    var script = "{\"mandatorytext\":\"mandatory Hello World\",\"optionaltext\":\"optional Hello World\"}"
+    pb.setScript(script);
+    var response = pb.execute(true);
+    gs.log("OUTPUT: " + response.output);
+    gs.log("ERROR: " + response.error);
+
+
+To get to the utility, simply browse to: "MID Server->PowerShell Utility".
+Once you get there, you will be present with the GUI PowerShell utility. Enter in a valid, running, MID Server. Then type in the remote Windows device IP Address that will execute your PowerShell script. The IP Address of 127.0.0.1 tells the MID Server to execute the script on the same box that is hosting the MID Server.
+
+
+https://www.servicenow.com/community/developer-forum/how-to-trigger-powershell-script-from-servicneow-workflow/m-p/1560763
+Execute powershell script from ServiceNow workflow run script activity -->
+var pScript = “Script that needs to be executed”;
+var powershell = new PowershellProbe(‘MID_SERVER_NAME’, gs.getProperty(‘mid.server.ip’));
+powershell.setScript(pScript);
+var resp = powershell.execute(true);
+workflow.scratchpad.error = resp.error;
+workflow.scratchpad.output = resp.output;
+if(!resp.output.nil() && resp.output ! = ‘null’)
+current.work_notes = resp.output;
+else if(!resp.error.nil()) {
+current.work_notes = ‘Error in script:  ‘ + resp.error;
+}
+gs.log(‘Response Output ‘ + resp.output);
+gs.log(‘Response Error ‘ + resp.error);
+
+OR
+
+// Define ecc_agent and ecc_agent_script_file
+var pb = new global.PowershellProbe("xxxx_server_name", "127.0.0.1","");  //1: mid server name 2: mid server ip
+
+// Parameter need to be sent as JSON
+var obj = JSON.stringify({'param1': value1}); //need an Object sent as JSON string
+pb.setScript(obj); // instead of obj you can pass script name which need to execute
+
+// Execute
+var objResponse = pb.execute(true);

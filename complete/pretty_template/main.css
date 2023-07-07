@@ -1,0 +1,112 @@
+#logo {
+    max-height: 150px;
+    display: block;
+    margin: 0 auto;
+}
+
+#head0 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0, 133, 194);
+    max-height: 150px;
+}
+
+.outer-form {
+    background-color: white;
+    color: black;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    border: 1px solid black;
+    margin: 0 auto;
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 75%);
+    box-sizing: border-box;
+    height: auto;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    background-color: rgb(156, 156, 156);
+    overflow: scroll;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+input.inp.txt {
+    border: 1px solid gray;
+}
+
+.final {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: rgb(0, 133, 194);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.outer-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    color: black;
+    justify-content: center;
+    align-items: center;
+    width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 20%);
+    box-sizing: border-box;
+    max-height: 500px;
+    height: auto;
+
+}
+
+.color-div {
+    background-color: rgb(211, 211, 211);
+    margin-bottom: 20px;
+    padding: 15px;
+    overflow-y: scroll;
+}
+
+.color-div::-webkit-scrollbar {
+    display: none;
+}
+
+.copy {
+    display: none;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: rgb(0, 133, 194);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+#author {
+    position: fixed;
+    top: calc(100vh - 30px);
+    left: calc(100vw - 75px);
+    font-size: small;
+    width: 70px;
+    height: 30px;
+}
