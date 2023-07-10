@@ -7,6 +7,12 @@ Import-Module ActiveDirectory
 
 $comp = Get-ADComputer -Filter "Name -like '*$number*'"
 $name = Get-ADComputer -Filter "Name -like '*$number*'" | Select-Object -Property Name
+if ($comp.Count -gt 0) {
+    [String[]]$big_array = "CPC", "CP4"
+    $comp = $comp | Where-Object { $_.Name -match "^($($big_array -join '|'))" }
+    $name = $name | Where-Object { $_.Name -match "^($($big_array -join '|'))" }
+}
+
 if (-not $comp.Enabled) {
     while ($true) {
         $answer = Read-Host "$name has been disabled, would you like to re-enable it? y/n"
