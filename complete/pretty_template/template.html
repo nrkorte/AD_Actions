@@ -234,7 +234,27 @@
         if (document.getElementById("unauth_yes").checked && document.getElementById("txtarea").value === "") {
             alert("Unauthorized user activity cannot be blank")
             return
+        } else if (document.getElementById("unauth_yes").checked && document.getElementById("txtarea").value.length > 128) {
+            alert("Unauthorized user activity exceeded the 128 character limit")
+            return
         }
+
+        var limit = false;
+
+        document.querySelectorAll("input[type='text']").forEach(function (inp) {
+            if (inp.value.length > 60) {
+                alert("Character count in input field exceeded the 60 character limit");
+                limit = true;
+                return;
+            }
+            if (new RegExp("[\\|\\[\\]{}+=~`?.;'\"/\\\\]").test(inp.value)) {
+                alert("Input field contains illegal character. Ensure there are no disallowed special characters");
+                limit = true;
+                return;
+            }
+        });
+        if (limit) return;
+
 
         // Convert text fields to text
         var textFields = document.querySelectorAll("input[type='text']");

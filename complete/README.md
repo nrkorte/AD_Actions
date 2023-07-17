@@ -13,8 +13,6 @@ folder_access_vx-x.ps1
     Known Bugs:
     I think I worked out all of the bugs so far but if there is any problems let me (Nick) know!
 
-    ![Alt Text](./use.png)
-
 remove_access_vx-x.ps1
 
     Purpose: Automates removing users from all groups associated with a folder

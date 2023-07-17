@@ -86,8 +86,14 @@ if (!$fuck_it_we_ball) {
         $ret = $ret | Where-Object { ($_.EndsWith("-M")) }
     }
     elseif ($rwm.Contains("w")) {
-        # Write-Host "There was no write access found in association with the folder $path. Did you mean to request modify access?"
-        $ret = $ret | Where-Object { ($_.EndsWith("-W")) }
+        $tm = Read-Host "There was no write access found in association with the folder $path. Did you mean to request modify access? y/n"
+        if ($tm -eq "y") {
+            $ret = $savestate
+            $ret = $ret | Where-Object { ($_.EndsWith("-M")) }
+        }
+        else {
+            $ret = $ret | Where-Object { ($_.EndsWith("-W")) }
+        }
     }
     elseif ($rwm.Contains("r")) {
         $ret = $ret | Where-Object { ($_.EndsWith("-R")) }

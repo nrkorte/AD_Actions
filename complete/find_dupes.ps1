@@ -5,7 +5,7 @@ $wks2 = "OU=Workstations,OU=Clients,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global
 $mwks1 = "OU=Mobile Workstations,OU=Clients,OU=BOU,OU=CP,OU=_Divisions,DC=icig,DC=global"
 $mwks2 = "OU=Mobile Workstations,OU=Clients,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global"
 
-Get-Content ..\output.txt | ForEach-Object {
+Get-Content ..\..\output.txt | ForEach-Object {
     $asset = $_
     $workstations = @()
     $mworkstations = @()
