@@ -1,3 +1,5 @@
+# Remove from group. Removes users from a group
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$Username,

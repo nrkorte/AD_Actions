@@ -1,3 +1,5 @@
+# Script to enable or disable a computer
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$number

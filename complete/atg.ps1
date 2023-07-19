@@ -1,3 +1,5 @@
+# Add to group. Adds a user to group
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$Username,

@@ -1,3 +1,5 @@
+# Folder access file to find and give permissions to users
+
 # Accepts three arguments: A username and a path to a folder and permission level
 param (
     [Parameter(Mandatory = $true)]
@@ -70,7 +72,7 @@ foreach ($element in $Groups) {
 $fuck_it_we_ball = $false
 $savestate = $ret | Where-Object { $_ -match "[-](M|R|W)$" }
 if ($savestate.Count -lt 1) {
-    [String[]]$big_array = "ICIG\QC_CofA", "ICIG\QC_TLC_Pictures", "ICIG\ROUFCT_ClientAdmin", "ICIG\ROUFCT_ITAdmins", "ICIG\ROUFCT_PlantSups", "ICIG\ROUORG_AllUsers", "ICIG\ROUORG_RCCPlantCommunication"
+    [String[]]$big_array = "ICIG\QC_CofA", "ICIG\QC_TLC_Pictures", "ICIG\ROUFCT_ClientAdmin", "ICIG\ROUFCT_ITAdmins", "ICIG\ROUFCT_PlantSups", "ICIG\ROUORG_AllUsers", "ICIG\ROUORG_RCCPlantCommunication", "Boulder-Test-Mig1"
     $ret = $ret | Where-Object { $big_array -contains $_ }
     $fuck_it_we_ball = $true
 }

@@ -1,3 +1,5 @@
+# Enable user
+
 param (
    [Parameter(Mandatory = $true)]
    [string]$Username

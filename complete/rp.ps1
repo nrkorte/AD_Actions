@@ -1,3 +1,5 @@
+# Reset password of user to Welcome1
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$Username

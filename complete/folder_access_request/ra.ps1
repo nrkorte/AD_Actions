@@ -1,3 +1,5 @@
+# Remove access from a folder
+
 # Accepts two arguments: A username and a path to a folder
 param (
     [Parameter(Mandatory = $true)]

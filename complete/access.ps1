@@ -1,3 +1,5 @@
+# What groups have access to a file
+
 # Accepts two arguments: A username and a path to a folder
 param (
     [Parameter(Mandatory = $true)]

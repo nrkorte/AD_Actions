@@ -1,3 +1,5 @@
+# Add office location. Adds COL or BOU respectively to their office location
+
 Import-Module ActiveDirectory
 
 $ous = "OU=Users,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global", "OU=Users,OU=BOU,OU=CP,OU=_Divisions,DC=icig,DC=global"

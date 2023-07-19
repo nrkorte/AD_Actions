@@ -1,3 +1,5 @@
+# Gets the jobs associated with a group
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$Group

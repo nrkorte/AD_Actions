@@ -1,3 +1,5 @@
+# Disable empty computers. If a computer has no descritpion, disable it
+
 Import-Module ActiveDirectory
 
 $ous = "OU=Workstations,OU=Clients,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global", "OU=Mobile Workstations,OU=Clients,OU=COL,OU=CP,OU=_Divisions,DC=icig,DC=global"

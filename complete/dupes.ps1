@@ -1,3 +1,5 @@
+# Finds duplicate asset numbers on computers
+
 Import-Module ActiveDirectory
 
 $wks1 = "OU=Workstations,OU=Clients,OU=BOU,OU=CP,OU=_Divisions,DC=icig,DC=global"

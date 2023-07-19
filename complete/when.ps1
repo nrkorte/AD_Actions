@@ -1,3 +1,5 @@
+# When was a user created?
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$Username
