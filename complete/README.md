@@ -1,9 +1,9 @@
-folder_access_vx-x.ps1
+fa.ps1
 
     Purpose: Automates the process of adding user to folder access groups
 
     How to use:
-    1. Run this command -> ./folder_access_vx-x.ps1 "username" "path" "rwm"
+    1. Run this command -> ./fa.ps1 "username" "path" "rwm"
 
     Program arguments:
     username-> this is the username of the user (their ICIG username)
@@ -13,12 +13,12 @@ folder_access_vx-x.ps1
     Known Bugs:
     I think I worked out all of the bugs so far but if there is any problems let me (Nick) know!
 
-remove_access_vx-x.ps1
+ra.ps1
 
     Purpose: Automates removing users from all groups associated with a folder
 
     How to use:
-    1. Run this command -> ./remove_access_vx-x.ps1 "username" "path"
+    1. Run this command -> ./ra.ps1 "username" "path"
 
     Program arguments:
     username-> this is the username of the user (their ICIG username)
@@ -27,12 +27,12 @@ remove_access_vx-x.ps1
     Known bugs:
     n/a
 
-change_access_level_vx-x.ps1
+cha.ps1
 
     Purpose: Changes what permissions a user has on a folder
 
     How to use:
-    1. Run this command -> ./change_access_level_vx-x.ps1 "username" "path" "permissions"
+    1. Run this command -> ./cha.ps1 "username" "path" "permissions"
 
     Program arguments:
     username-> this is the username of the user (their ICIG username)
@@ -43,12 +43,12 @@ change_access_level_vx-x.ps1
     n/a
 
 
-add_office_location.ps1
+aol.ps1
 
     Purpose: Adds the appropraite office to each user (either COL or BOU depending on their job site)
 
     How to use:
-    1. Run this command -> ./add_office_location.ps1
+    1. Run this command -> ./aol.ps1
 
     Program Arguments:
     n/a
@@ -56,12 +56,12 @@ add_office_location.ps1
     Known Bugs:
     n/a
 
-disable_user.ps1
+du.ps1
 
     Purpose: To automate disabling a user and adding them to the correct disables users OU
 
     How to use:
-    1. Run this command -> ./disable_user.ps1 "username"
+    1. Run this command -> ./du.ps1 "username"
 
     Program Arguments:
     username-> The username of the user you are trying to disable
@@ -69,12 +69,12 @@ disable_user.ps1
     Known Bugs:
     n/a
 
-enable_user.ps1
+eu.ps1
 
     Purpose: To automate enabling a user and removing them from the disables users OU and adding them to the correct users OU
 
     How to use:
-    1. Run this command -> ./enable_user.ps1 "username"
+    1. Run this command -> ./eu.ps1 "username"
 
     Program Arguments:
     username-> The username of the user you are trying to enable
@@ -82,12 +82,12 @@ enable_user.ps1
     Known Bugs:
     n/a
 
-job_from_group.ps1
+jobs.ps1
 
     Purpose: To return what jobs are associated with what group
 
     How to use:
-    1. Run this command -> ./job_from_group.ps1 "group"
+    1. Run this command -> ./jobs.ps1 "group"
 
     Program Arguments:
     group-> The group name of the group you are trying to find the associated jobs from
@@ -95,12 +95,12 @@ job_from_group.ps1
     Known Bugs:
     n/a
 
-reset_password.ps1
+rp.ps1
 
     Purpose: To automate the action of resetting a users password
 
     How to use:
-    1. Run this command -> ./reset_password.ps1 "username"
+    1. Run this command -> ./rp.ps1 "username"
 
     Program Arguments:
     username-> The username of the user you are trying to reset the password of
@@ -108,12 +108,12 @@ reset_password.ps1
     Known Bugs:
     n/a
 
-user_from_group.ps1
+rfg.ps1
 
     Purpose: To automate the action of removing a user from a group
 
     How to use:
-    1. Run this command -> ./user_from_group.ps1 "username" "group"
+    1. Run this command -> ./rfg.ps1 "username" "group"
 
     Program Arguments:
     username-> The username of the user you are trying to remove
@@ -122,12 +122,12 @@ user_from_group.ps1
     Known Bugs:
     n/a
 
-user_to_group.ps1
+atg.ps1
 
     Purpose: To automate the action of adding a user to a group
 
     How to use:
-    1. Run this command -> ./user_to_group.ps1 "username" "group"
+    1. Run this command -> ./atg.ps1 "username" "group"
 
     Program Arguments:
     username-> The username of the user you are trying to add
@@ -136,12 +136,12 @@ user_to_group.ps1
     Known Bugs:
     n/a
 
-what_access.ps1
+access.ps1
 
     Purpose: To see what groups have access to a folder
 
     How to use:
-    1. Run this command -> ./what_access.ps1 "path"
+    1. Run this command -> ./access.ps1 "path"
 
     Program Arguments:
     path-> The path to the folder you are trying to see the access rights of
