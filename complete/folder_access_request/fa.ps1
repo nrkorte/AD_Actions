@@ -14,7 +14,7 @@ param (
 Import-Module ActiveDirectory
 
 if (!$rwm.Contains("r") -and !$rwm.Contains("w") -and !$rwm.Contains("m")) {
-    Write-Host "Your permissions (rwm) argument needs to contain an r, a w, or an m"
+    Write-Host "Your permissions (rwm) argument needs to contain an r, w, or m"
     exit
 }
 
@@ -124,14 +124,16 @@ foreach ($element in $ret) {
   
 }
 
+$full_name = (Get-ADUser $Username).Name
+
 # Print out information about where the user was / was not added to
 if ($added.Count -ne 0 -or $already.Count -ne 0) {
     if ($added.Count -ne 0) {
-        Write-Host "Added the user '$Username' to --> "
+        Write-Host "Added the user '$full_name' to --> "
         $added
     }
     if ($already.Count -ne 0) {
-        Write-Host "User '$Username' was already found in --> "
+        Write-Host "User '$full_name' was already found in --> "
         $already
     }
 }
