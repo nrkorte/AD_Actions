@@ -11,6 +11,7 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$rwm
 )
+
 Import-Module ActiveDirectory
 
 if (!$rwm.Contains("r") -and !$rwm.Contains("w") -and !$rwm.Contains("m")) {
@@ -88,13 +89,17 @@ if (!$fuck_it_we_ball) {
         $ret = $ret | Where-Object { ($_.EndsWith("-M")) }
     }
     elseif ($rwm.Contains("w")) {
-        $tm = Read-Host "There was no write access found in association with the folder $path. Did you mean to request modify access? y/n"
-        if ($tm -eq "y") {
-            $ret = $savestate
-            $ret = $ret | Where-Object { ($_.EndsWith("-M")) }
-        }
-        else {
-            $ret = $ret | Where-Object { ($_.EndsWith("-W")) }
+        $ret = $ret | Where-Object { ($_.EndsWith("-W")) }
+        if ($ret.Count -lt 1) {
+            $tm = Read-Host "There was no write access found in association with the folder $path. Did you mean to request modify access? y/n"
+            if ($tm -eq "y") {
+                $ret = $savestate
+                $ret = $ret | Where-Object { ($_.EndsWith("-M")) }
+            }
+            else {
+                Write-Host "There were no known groups we could add the user to with the specified permissions -" $rwm "- The groups found are listed below"
+                exit
+            }
         }
     }
     elseif ($rwm.Contains("r")) {
