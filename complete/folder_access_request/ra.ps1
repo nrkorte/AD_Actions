@@ -77,13 +77,12 @@ foreach ($element in $ret) {
 
 }
 
-if ($removed.Count -ne 0 -or $already.Count -ne 0) {
+if ($removed.Count -ne 0) {
     if ($removed.Count -ne 0) {
         Write-Host "Removed the user '$Username' from --> "
         $removed
     }
 }
 else {
-    Write-Host "There were no known groups the user had that contained an association with the folder specified"
-    $ret
+    Write-Host "There were no known groups the user had access to that contained an association with the folder specified"
 }
