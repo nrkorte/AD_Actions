@@ -39,6 +39,8 @@ if ($path.Contains(":")) {
         "J" { $path = "\\uscosf5101.icig.global\GroupShares\Departments" + $rest }
         "K" { $path = "\\uscosf5101.icig.global\GroupShares\Shared" + $rest }
         "L" { $path = "\\uscosf5101.icig.global\GroupShares\SFA" + $rest }
+        "M" { $path = "\\uscosf5101.icig.global\GroupShares\Apps" + $rest }
+        "R" { $path = "\\cp4boufs101.icig.global\g\forms" + $rest }
         "V" { $path = "\\cp4boufs102.icig.global\f\departments" + $rest }
         "W" { $path = "\\cp4boufs101.icig.global\f\Projects" + $rest }
         "X" { $path = "\\cp4boufs101.icig.global\f\Projects\Vault" + $rest }
